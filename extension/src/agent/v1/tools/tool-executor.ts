@@ -403,6 +403,7 @@ export class ToolExecutor {
 
 		try {
 			context.status = "processing"
+			console.log(`[ToolExecutor] Processing tool: ${context.tool.name}`)
 			const result = await context.tool.execute({
 				name: context.tool.name as ToolName,
 				input: context.tool.paramsInput,
@@ -414,6 +415,7 @@ export class ToolExecutor {
 				say: this.koduDev.taskExecutor.say.bind(this.koduDev.taskExecutor),
 				updateAsk: this.koduDev.taskExecutor.updateAsk.bind(this.koduDev.taskExecutor),
 			})
+			console.log(`[ToolExecutor] Tool completed: ${context.tool.name}`)
 
 			this.toolResults.push({ name: context.tool.name, result })
 			context.status = "completed"

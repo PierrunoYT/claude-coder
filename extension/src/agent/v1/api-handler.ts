@@ -307,6 +307,9 @@ ${this.customInstructions.trim()}
 							// will this return return otuside the loop? or outside of the function?
 							return
 						}
+						if (chunk.code === -1) {
+							console.log("Error in stream", chunk.body.msg)
+						}
 
 						if (chunk.code === -1 && chunk.body.msg?.includes("prompt is too long")) {
 							// clear the interval
@@ -409,7 +412,7 @@ ${this.customInstructions.trim()}
 		) {
 			const isInlineEditMode = await GlobalStateManager.getInstance().getGlobalState("isInlineEditingEnabled")
 			if (isInlineEditMode) {
-				const newCriticalMsg = (await import("./prompts/m-11-18-2024.prompt")).criticalMsg
+				const newCriticalMsg = (await import("./prompts/m-11-20-2024.prompt")).criticalMsg
 				lastMessage.content.push({
 					type: "text",
 					text: newCriticalMsg,

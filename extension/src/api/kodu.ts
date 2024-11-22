@@ -312,10 +312,7 @@ export class KoduHandler implements ApiHandler {
 				top_p: 0.9,
 			},
 			{
-				headers: {
-					"Content-Type": "application/json",
-					"x-api-key": this.options.koduApiKey || "",
-				},
+				headers: this.requestHeaders,
 				responseType: "stream",
 				signal: abortSignal ?? undefined,
 				timeout: 60_000,
@@ -400,7 +397,7 @@ export class KoduHandler implements ApiHandler {
 		// if it's inline edit we import different prompt
 		if (isInlineEditingMode) {
 			system.pop()
-			const { BASE_SYSTEM_PROMPT } = await import("../agent/v1/prompts/m-11-18-2024.prompt")
+			const { BASE_SYSTEM_PROMPT } = await import("../agent/v1/prompts/m-11-20-2024.prompt")
 			const prompt = await BASE_SYSTEM_PROMPT(
 				getCwd(),
 				this.getModel().info.supportsImages,
@@ -495,8 +492,7 @@ export class KoduHandler implements ApiHandler {
 			},
 			{
 				headers: {
-					"Content-Type": "application/json",
-					"x-api-key": this.options.koduApiKey || "",
+					...this.requestHeaders,
 					"continue-generation": isContinueGenerationEnabled ? "true" : "false",
 				},
 				responseType: "stream",
@@ -618,10 +614,7 @@ export class KoduHandler implements ApiHandler {
 				browserMode,
 			},
 			{
-				headers: {
-					"Content-Type": "application/json",
-					"x-api-key": this.options.koduApiKey || "",
-				},
+				headers: this.requestHeaders,
 				timeout: 60_000,
 				responseType: "stream",
 				signal: abortSignal ?? undefined,
@@ -657,10 +650,7 @@ export class KoduHandler implements ApiHandler {
 			},
 			{
 				responseType: "arraybuffer",
-				headers: {
-					"Content-Type": "application/json",
-					"x-api-key": this.options.koduApiKey || "",
-				},
+				headers: this.requestHeaders,
 				timeout: 60_000,
 				cancelToken: this.cancelTokenSource?.token,
 			}
@@ -678,10 +668,7 @@ export class KoduHandler implements ApiHandler {
 				query,
 			},
 			{
-				headers: {
-					"Content-Type": "application/json",
-					"x-api-key": this.options.koduApiKey || "",
-				},
+				headers: this.requestHeaders,
 				timeout: 60_000,
 				cancelToken: this.cancelTokenSource?.token,
 			}
@@ -700,15 +687,20 @@ export class KoduHandler implements ApiHandler {
 				command,
 			},
 			{
-				headers: {
-					"Content-Type": "application/json",
-					"x-api-key": this.options.koduApiKey || "",
-				},
+				headers: this.requestHeaders,
 				timeout: 60_000,
 				cancelToken: this.cancelTokenSource?.token,
 			}
 		)
 
 		return response.data
+	}
+
+	private get requestHeaders(): Record<string, any> {
+		return {
+			"Content-Type": "application/json",
+			"x-api-key": this.options.koduApiKey || "",
+			"is-running-eval": !!process.env.IS_RUNNING_EVAL,
+		}
 	}
 }
