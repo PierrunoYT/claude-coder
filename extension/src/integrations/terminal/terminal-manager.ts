@@ -263,6 +263,22 @@ export class TerminalRegistry {
 			this.addOutput(terminalId, "", true)
 		}
 	}
+
+	static getQuickFixSuggestions(terminalId: number): string[] {
+		const logs = this.getTerminalLogs(terminalId)
+		const suggestions: string[] = []
+
+		// Example logic to generate quick fix suggestions based on logs
+		for (const log of logs) {
+			if (log.includes("error")) {
+				suggestions.push("Check the error message and fix the syntax.")
+			} else if (log.includes("warning")) {
+				suggestions.push("Review the warning and consider making the suggested changes.")
+			}
+		}
+
+		return suggestions
+	}
 }
 
 export class TerminalManager {

@@ -322,6 +322,30 @@ export function activate(context: vscode.ExtensionContext) {
 			},
 		})
 	)
+
+	// Register the command to show quick fix suggestions
+	context.subscriptions.push(
+		vscode.commands.registerCommand(`${extensionName}.showQuickFixSuggestions`, async () => {
+			const terminalManager = new TerminalManager()
+			const terminalOutput = terminalManager.getUnretrievedOutput(1) // Assuming terminal ID 1 for simplicity
+			const diagnosticsHandler = new (await import("./agent/v1/handlers/diagnostics-handler")).DiagnosticsHandler()
+			const quickFixSuggestions = diagnosticsHandler.getQuickFixSuggestions(terminalOutput)
+			vscode.window.showQuickPick(quickFixSuggestions, { placeHolder: "Select a quick fix" }).then((selected) => {
+				if (selected) {
+					vscode.window.showInformationMessage(`Selected quick fix: ${selected}`)
+				}
+			})
+		})
+	)
+
+	// Add a listener for terminal output to detect errors and warnings
+	const terminalManager = new TerminalManager()
+	terminalManager.on("output", (terminalId, type, data) => {
+		if (type === "stderr" || data.includes("error") || data.includes("warning")) {
+			vscode.commands.executeCommand(`${extensionName}.showQuickFixSuggestions`)
+		}
+	})
+
 	// testWriteToFile(sidebarProvider)
 }
 

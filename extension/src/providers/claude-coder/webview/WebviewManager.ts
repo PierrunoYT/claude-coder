@@ -444,6 +444,15 @@ export class WebviewManager {
 					case "debug":
 						await this.handleDebugInstruction()
 						break
+					case "showQuickFixSuggestions":
+						const terminalManager = new (await import("../../../integrations/terminal/terminal-manager")).TerminalManager()
+						const quickFixSuggestions = terminalManager.getQuickFixSuggestions(1) // Assuming terminal ID 1 for simplicity
+						vscode.window.showQuickPick(quickFixSuggestions, { placeHolder: "Select a quick fix" }).then((selected) => {
+							if (selected) {
+								vscode.window.showInformationMessage(`Selected quick fix: ${selected}`)
+							}
+						})
+						break
 				}
 			},
 			null,

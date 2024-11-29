@@ -101,6 +101,10 @@ const InteractiveTerminal = ({ initialCommand }: { initialCommand?: string }) =>
 		[updateCommandId]
 	)
 
+	const showQuickFixSuggestions = useCallback(() => {
+		vscode.postMessage({ type: "showQuickFixSuggestions" })
+	}, [])
+
 	useEffect(() => {
 		const element = terminalElementRef.current!
 
@@ -239,6 +243,23 @@ const InteractiveTerminal = ({ initialCommand }: { initialCommand?: string }) =>
 			<div className="absolute top-2 right-2">
 				<span className="codicon codicon-terminal text-primary" />
 			</div>
+
+			<TooltipProvider>
+				<Tooltip>
+					<TooltipTrigger asChild>
+						<Button
+							className="absolute top-2 left-2 p-0 m-0 h-6 w-6 hover:bg-primary/40"
+							variant="ghost"
+							size="icon"
+							onClick={showQuickFixSuggestions}>
+							<span className="codicon codicon-lightbulb text-primary-foreground" />
+						</Button>
+					</TooltipTrigger>
+					<TooltipContent>
+						<p>Show Quick Fix Suggestions</p>
+					</TooltipContent>
+				</Tooltip>
+			</TooltipProvider>
 		</div>
 	)
 }

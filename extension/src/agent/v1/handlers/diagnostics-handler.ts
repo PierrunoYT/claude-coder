@@ -16,8 +16,8 @@ export class DiagnosticsHandler {
 		return DiagnosticsHandler.instance
 	}
 
-	public getDiagnostics(paths: string[]): { key: string; errorString: string | null }[] {
-		const results: { key: string; errorString: string | null }[] = []
+	public getDiagnostics(paths: string[]): { key: string; errorString: string | null, quickFixes: string[] }[] {
+		const results: { key: string; errorString: string | null, quickFixes: string[] }[] = []
 
 		for (const filePath of paths) {
 			const uri = vscode.Uri.file(path.resolve(getCwd(), filePath))
@@ -25,12 +25,14 @@ export class DiagnosticsHandler {
 			const errors = diagnostics.filter((diag) => diag.severity === vscode.DiagnosticSeverity.Error)
 
 			let errorString: string | null = null
+			let quickFixes: string[] = []
 
 			if (errors.length > 0) {
 				errorString = this.formatDiagnostics(uri, errors)
+				quickFixes = this.getQuickFixSuggestions(uri, errors)
 			}
 
-			results.push({ key: filePath, errorString })
+			results.push({ key: filePath, errorString, quickFixes })
 		}
 
 		return results
@@ -47,5 +49,27 @@ export class DiagnosticsHandler {
 		}
 
 		return result.trim()
+	}
+
+	private getQuickFixSuggestions(uri: vscode.Uri, diagnostics: vscode.Diagnostic[]): string[] {
+		const quickFixes: string[] = []
+
+		for (const diagnostic of diagnostics) {
+			const codeActions = vscode.commands.executeCommand<vscode.CodeAction[]>(
+				"vscode.executeCodeActionProvider",
+				uri,
+				diagnostic.range
+			)
+
+			if (codeActions) {
+				for (const action of codeActions) {
+					if (action.kind && action.kind.contains(vscode.CodeActionKind.QuickFix)) {
+						quickFixes.push(action.title)
+					}
+				}
+			}
+		}
+
+		return quickFixes
 	}
 }
