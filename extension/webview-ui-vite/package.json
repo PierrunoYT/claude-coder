@@ -55,7 +55,7 @@
 		"embla-carousel-react": "^8.2.1",
 		"framer-motion": "^11.5.4",
 		"fuse.js": "^7.0.0",
-		"input-otp": "^1.2.4",
+		"input-otp": "^1.4.1",
 		"jotai-devtools": "^0.10.1",
 		"jsdom": "^25.0.1",
 		"lucide-react": "^0.439.0",
