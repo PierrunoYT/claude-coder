@@ -53,7 +53,7 @@
 		"color": "^4.2.3",
 		"date-fns": "^3.6.0",
 		"embla-carousel-react": "^8.2.1",
-		"framer-motion": "^11.5.4",
+		"framer-motion": "^11.11.17",
 		"fuse.js": "^7.0.0",
 		"input-otp": "^1.2.4",
 		"jotai-devtools": "^0.10.1",
